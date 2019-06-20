@@ -1,0 +1,8 @@
+enum34
+keras_applications
+keras_preprocessing
+h5py
+matplotlib
+numpy
+six
+tensorflow_estimator

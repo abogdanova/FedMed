@@ -1,0 +1,146 @@
+# Automatically generated file; please do not edit
+toc:
+  - title: tff
+    section:
+    - title: Overview
+      path: /federated/api_docs/python/tff
+    - title: Computation
+      path: /federated/api_docs/python/tff/Computation
+    - title: FederatedType
+      path: /federated/api_docs/python/tff/FederatedType
+    - title: federated_aggregate
+      path: /federated/api_docs/python/tff/federated_aggregate
+    - title: federated_apply
+      path: /federated/api_docs/python/tff/federated_apply
+    - title: federated_broadcast
+      path: /federated/api_docs/python/tff/federated_broadcast
+    - title: federated_collect
+      path: /federated/api_docs/python/tff/federated_collect
+    - title: federated_computation
+      path: /federated/api_docs/python/tff/federated_computation
+    - title: federated_map
+      path: /federated/api_docs/python/tff/federated_map
+    - title: federated_mean
+      path: /federated/api_docs/python/tff/federated_mean
+    - title: federated_reduce
+      path: /federated/api_docs/python/tff/federated_reduce
+    - title: federated_sum
+      path: /federated/api_docs/python/tff/federated_sum
+    - title: federated_value
+      path: /federated/api_docs/python/tff/federated_value
+    - title: federated_zip
+      path: /federated/api_docs/python/tff/federated_zip
+    - title: FunctionType
+      path: /federated/api_docs/python/tff/FunctionType
+    - title: NamedTupleType
+      path: /federated/api_docs/python/tff/NamedTupleType
+    - title: SequenceType
+      path: /federated/api_docs/python/tff/SequenceType
+    - title: sequence_map
+      path: /federated/api_docs/python/tff/sequence_map
+    - title: sequence_reduce
+      path: /federated/api_docs/python/tff/sequence_reduce
+    - title: sequence_sum
+      path: /federated/api_docs/python/tff/sequence_sum
+    - title: TensorType
+      path: /federated/api_docs/python/tff/TensorType
+    - title: tf_computation
+      path: /federated/api_docs/python/tff/tf_computation
+    - title: to_type
+      path: /federated/api_docs/python/tff/to_type
+    - title: to_value
+      path: /federated/api_docs/python/tff/to_value
+    - title: Type
+      path: /federated/api_docs/python/tff/Type
+    - title: TypedObject
+      path: /federated/api_docs/python/tff/TypedObject
+    - title: Value
+      path: /federated/api_docs/python/tff/Value
+  - title: tff.learning
+    section:
+    - title: Overview
+      path: /federated/api_docs/python/tff/learning
+    - title: BatchOutput
+      path: /federated/api_docs/python/tff/learning/BatchOutput
+    - title: build_federated_averaging_process
+      path: /federated/api_docs/python/tff/learning/build_federated_averaging_process
+    - title: build_federated_evaluation
+      path: /federated/api_docs/python/tff/learning/build_federated_evaluation
+    - title: build_federated_sgd_process
+      path: /federated/api_docs/python/tff/learning/build_federated_sgd_process
+    - title: from_compiled_keras_model
+      path: /federated/api_docs/python/tff/learning/from_compiled_keras_model
+    - title: from_keras_model
+      path: /federated/api_docs/python/tff/learning/from_keras_model
+    - title: keras_weights_from_tff_weights
+      path: /federated/api_docs/python/tff/learning/keras_weights_from_tff_weights
+    - title: Model
+      path: /federated/api_docs/python/tff/learning/Model
+    - title: state_with_new_model_weights
+      path: /federated/api_docs/python/tff/learning/state_with_new_model_weights
+    - title: TrainableModel
+      path: /federated/api_docs/python/tff/learning/TrainableModel
+    - title: framework
+      section:
+      - title: Overview
+        path: /federated/api_docs/python/tff/learning/framework
+      - title: build_model_delta_optimizer_process
+        path: /federated/api_docs/python/tff/learning/framework/build_model_delta_optimizer_process
+      - title: ClientDeltaFn
+        path: /federated/api_docs/python/tff/learning/framework/ClientDeltaFn
+      - title: ClientOutput
+        path: /federated/api_docs/python/tff/learning/framework/ClientOutput
+      - title: EnhancedModel
+        path: /federated/api_docs/python/tff/learning/framework/EnhancedModel
+      - title: EnhancedTrainableModel
+        path: /federated/api_docs/python/tff/learning/framework/EnhancedTrainableModel
+      - title: ModelWeights
+        path: /federated/api_docs/python/tff/learning/framework/ModelWeights
+  - title: tff.simulation
+    section:
+    - title: Overview
+      path: /federated/api_docs/python/tff/simulation
+    - title: ClientData
+      path: /federated/api_docs/python/tff/simulation/ClientData
+    - title: FilePerUserClientData
+      path: /federated/api_docs/python/tff/simulation/FilePerUserClientData
+    - title: HDF5ClientData
+      path: /federated/api_docs/python/tff/simulation/HDF5ClientData
+    - title: TransformingClientData
+      path: /federated/api_docs/python/tff/simulation/TransformingClientData
+    - title: datasets
+      section:
+      - title: Overview
+        path: /federated/api_docs/python/tff/simulation/datasets
+      - title: emnist
+        section:
+        - title: Overview
+          path: /federated/api_docs/python/tff/simulation/datasets/emnist
+        - title: infinite_emnist
+          path: /federated/api_docs/python/tff/simulation/datasets/emnist/infinite_emnist
+        - title: load_data
+          path: /federated/api_docs/python/tff/simulation/datasets/emnist/load_data
+      - title: shakespeare
+        section:
+        - title: Overview
+          path: /federated/api_docs/python/tff/simulation/datasets/shakespeare
+        - title: load_data
+          path: /federated/api_docs/python/tff/simulation/datasets/shakespeare/load_data
+  - title: tff.utils
+    section:
+    - title: Overview
+      path: /federated/api_docs/python/tff/utils
+    - title: assign
+      path: /federated/api_docs/python/tff/utils/assign
+    - title: get_variables
+      path: /federated/api_docs/python/tff/utils/get_variables
+    - title: identity
+      path: /federated/api_docs/python/tff/utils/identity
+    - title: IterativeProcess
+      path: /federated/api_docs/python/tff/utils/IterativeProcess
+    - title: StatefulAggregateFn
+      path: /federated/api_docs/python/tff/utils/StatefulAggregateFn
+    - title: StatefulBroadcastFn
+      path: /federated/api_docs/python/tff/utils/StatefulBroadcastFn
+    - title: update_state
+      path: /federated/api_docs/python/tff/utils/update_state
