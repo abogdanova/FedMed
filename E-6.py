@@ -46,7 +46,7 @@ def mane():
     	fd_test_accuracy.append(test_metrics.sparse_categorical_accuracy)
 
     try:
-    	with open('Log/Exp1'+ datetime.datetime.now().strftime("%y-%m-%d-%H-%M")+'.txt', 'w') as log:
+    	with open('Log/Exp1/'+ datetime.datetime.now().strftime("%y-%m-%d-%H-%M")+'.txt', 'w') as log:
     		print("Cifar10, Federated E-6, IDD, minibatch_size: 32", file=log)
     		print("Train Loss: {}".format(fd_train_loss), file=log)
     		print("Test Accuracy: {}".format(fd_test_accuracy), file=log)
