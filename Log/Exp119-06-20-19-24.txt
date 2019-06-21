@@ -1,3 +1,0 @@
-Cifar10, Federated E-1, IDD, minibatch_size: 32
-Train Loss: [1.8942627]
-Test Accuracy: [0.3986]

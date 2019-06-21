@@ -16,7 +16,7 @@ tf.compat.v1.enable_v2_behavior()
 NUM_EXAMPLES_PER_USER = 2000
 BATCH_SIZE = 32
 USERS = 5
-NUM_EPOCHS = 2
+NUM_EPOCHS = 1
 CLASSES = 10
 WIDTH = 32
 HEIGHT = 32
@@ -38,7 +38,7 @@ def mane():
     state = iterative_process.initialize()
     fd_test_accuracy = []
     fd_train_loss = []
-    for round_num in range(12):
+    for round_num in range(24):
     	state, metrics = iterative_process.next(state, federated_train_data)
     	test_metrics = evaluation(state.model, federated_test_data)
     	fd_train_loss.append(metrics[1])
@@ -46,7 +46,7 @@ def mane():
 
     try:
     	with open('Log/Exp2/'+ datetime.datetime.now().strftime("%y-%m-%d-%H-%M")+'.txt', 'w') as log:
-    		print("Cifar10, Federated E-2, IDD, minibatch_size: 32", file=log)
+    		print("Cifar10, Federated E-1, IDD, minibatch_size: 32", file=log)
     		print("Train Loss: {}".format(fd_train_loss), file=log)
     		print("Test Accuracy: {}".format(fd_test_accuracy), file=log)
     except IOError:

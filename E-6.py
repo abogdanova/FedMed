@@ -21,7 +21,7 @@ CLASSES = 10
 WIDTH = 32
 HEIGHT = 32
 CHANNELS = 3
-sample_batch = None
+
 
 def mane():
     """ Run program """
@@ -39,14 +39,14 @@ def mane():
     state = iterative_process.initialize()
     fd_test_accuracy = []
     fd_train_loss = []
-    for round_num in range(2):
+    for round_num in range(4):
     	state, metrics = iterative_process.next(state, federated_train_data)
     	test_metrics = evaluation(state.model, federated_test_data)
     	fd_train_loss.append(metrics[1])
     	fd_test_accuracy.append(test_metrics.sparse_categorical_accuracy)
 
     try:
-    	with open('Log/Exp1/'+ datetime.datetime.now().strftime("%y-%m-%d-%H-%M")+'.txt', 'w') as log:
+    	with open('Log/Exp2/'+ datetime.datetime.now().strftime("%y-%m-%d-%H-%M")+'.txt', 'w') as log:
     		print("Cifar10, Federated E-6, IDD, minibatch_size: 32", file=log)
     		print("Train Loss: {}".format(fd_train_loss), file=log)
     		print("Test Accuracy: {}".format(fd_test_accuracy), file=log)
