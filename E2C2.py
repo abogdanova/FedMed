@@ -40,10 +40,10 @@ def mane():
     fd_train_loss = []
     for round_num in range(12):
         selected = np.random.choice(5, 2, replace=False)
-    	state, metrics = iterative_process.next(state, list(np.array(federated_train_data)[selected]))
-    	test_metrics = evaluation(state.model, federated_test_data)
-    	fd_train_loss.append(metrics[1])
-    	fd_test_accuracy.append(test_metrics.sparse_categorical_accuracy)
+        state, metrics = iterative_process.next(state, list(np.array(federated_train_data)[selected]))
+        test_metrics = evaluation(state.model, federated_test_data)
+        fd_train_loss.append(metrics[1])
+        fd_test_accuracy.append(test_metrics.sparse_categorical_accuracy)
 
     try:
     	with open('Log/Exp3/R24E2C2.txt', 'w') as log:
