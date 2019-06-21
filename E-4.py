@@ -77,7 +77,7 @@ def get_distributed(source, u):
             output_sequence.append({
                 'x': np.array([source[0][b] / 255.0 for b in batch_samples], dtype=np.float32),
                 'y': np.array([source[1][b] for b in batch_samples], dtype=np.int32)})
-        return output_sequence
+    return output_sequence
 
 
 def create_compiled_keras_model():
