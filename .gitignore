@@ -1,4 +1,5 @@
 Data/
+*.txt
 *.info
 *.rdat
 *.tdat
