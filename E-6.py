@@ -11,7 +11,7 @@ from tensorflow.python.keras.optimizer_v2 import gradient_descent
 from tensorflow.keras import layers
 
 
-#tf.compat.v1.enable_v2_behavior()
+tf.compat.v1.enable_v2_behavior()
 
 NUM_EXAMPLES_PER_USER = 2000
 BATCH_SIZE = 32
