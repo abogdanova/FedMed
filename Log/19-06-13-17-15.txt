@@ -1,4 +1,0 @@
-Train size: 60000, learning rate: 0.0001, num_epochs: 15, minibatch_size: 32
-[0.6797890837748838, 0.14703715461144856, 0.09078547916784886]
-Train Accuracy: 0.98315
-Test Accuracy: 0.9721
