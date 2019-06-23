@@ -13,11 +13,11 @@ from tensorflow.keras import layers
 
 tf.compat.v1.enable_v2_behavior()
 
-EXP_CODE = 'iE1C5'
+EXP_CODE = 'rE2C5'
 NUM_EXAMPLES_PER_USER = 2000
 BATCH_SIZE = 32
 USERS = 5
-NUM_EPOCHS = 1
+NUM_EPOCHS = 2
 CLASSES = 10
 
 WIDTH = 32
@@ -27,8 +27,8 @@ CHANNELS = 3
 def mane():
     """ Run program """
     cifar_train, cifar_test = tf.keras.datasets.cifar10.load_data()
-    federated_train_data = [get_distributed(cifar_train, u, 'i') for u in range(USERS)]
-    federated_test_data = [get_distributed(cifar_test, u, 'i') for u in range(USERS)]
+    federated_train_data = [get_distributed(cifar_train, u, 'r') for u in range(USERS)]
+    federated_test_data = [get_distributed(cifar_test, u, 'r') for u in range(USERS)]
     sample_batch = federated_train_data[1][-2]
     
     def model_fn():

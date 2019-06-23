@@ -13,11 +13,11 @@ from tensorflow.keras import layers
 
 tf.compat.v1.enable_v2_behavior()
 
-EXP_CODE = 'iE1C5'
+EXP_CODE = 'iE12C5'
 NUM_EXAMPLES_PER_USER = 2000
 BATCH_SIZE = 32
 USERS = 5
-NUM_EPOCHS = 1
+NUM_EPOCHS = 12
 CLASSES = 10
 
 WIDTH = 32

@@ -13,11 +13,11 @@ from tensorflow.keras import layers
 
 tf.compat.v1.enable_v2_behavior()
 
-EXP_CODE = 'iE1C5'
+EXP_CODE = 'nE3C2'
 NUM_EXAMPLES_PER_USER = 2000
 BATCH_SIZE = 32
 USERS = 5
-NUM_EPOCHS = 1
+NUM_EPOCHS = 3
 CLASSES = 10
 
 WIDTH = 32
@@ -27,8 +27,8 @@ CHANNELS = 3
 def mane():
     """ Run program """
     cifar_train, cifar_test = tf.keras.datasets.cifar10.load_data()
-    federated_train_data = [get_distributed(cifar_train, u, 'i') for u in range(USERS)]
-    federated_test_data = [get_distributed(cifar_test, u, 'i') for u in range(USERS)]
+    federated_train_data = [get_distributed(cifar_train, u, 'n') for u in range(USERS)]
+    federated_test_data = [get_distributed(cifar_test, u, 'n') for u in range(USERS)]
     sample_batch = federated_train_data[1][-2]
     
     def model_fn():
@@ -43,7 +43,7 @@ def mane():
     fd_train_loss = []
 
     for round_num in range(12):
-        selected = np.random.choice(5, 5, replace=False)
+        selected = np.random.choice(5, 2, replace=False)
         state, metrics = iterative_process.next(state, list(np.array(federated_train_data)[selected]))
         test_metrics = evaluation(state.model, federated_test_data)
         fd_train_loss.append(metrics[1])
@@ -51,7 +51,7 @@ def mane():
         fd_test_accuracy.append(test_metrics.sparse_categorical_accuracy)
 
     try:
-    	with open('Log/Exp6/'+ EXP_CODE + '.txt', 'w') as log:
+    	with open('Log/Exp7/'+ EXP_CODE + '.txt', 'w') as log:
     		print(EXP_CODE + "Train = {}".format(fd_train_loss), file=log)
     		print(EXP_CODE + "Test = {}".format(fd_test_loss), file=log)
     		print(EXP_CODE + "Accuracy = {}".format(fd_test_accuracy), file=log)
@@ -73,18 +73,12 @@ def get_indices_unbalanced(y):
     indices_array = []
     for c in range(CLASSES):
         indices_array.append([i for i, d in enumerate(y) if d == c])
-    # each user will have 2 classes excluded from their data sets, thus 250 examples * remaining 8 classes
-    class_shares = 250
-    # store indices for future use
+        class_shares = CLASSES // min(CLASSES, USERS)
     user_indices = []
-    # auxilary index array to pop out pairs of classes missing at each user
-    class_index = list(range(CLASSES))
     for u in range(USERS):
-        columns_out = [class_index.pop(0) for i in range(2)]
-        selected_columns = set(range(CLASSES)) - set(columns_out)
-        starting_index = u*class_shares
         user_indices.append(
-            np.array(indices_array)[list(selected_columns)].T[starting_index:starting_index + class_shares]
+            np.array(
+                [indices_array.pop(0)[:NUM_EXAMPLES_PER_USER//class_shares] for j in range(class_shares)])
             .flatten())
     return user_indices
 
@@ -122,7 +116,7 @@ def get_distributed(source, u, distribution):
         indices = get_indices_even(source[1])[u]
     elif distribution == 'n':
         indices = get_indices_unbalanced(source[1])[u]
-    elif: distribution == 'r':
+    elif distribution == 'r':
         indices = get_indices_realistic(source[1][:10000], u)[u]
     else:
         indices = get_indices_unbalanced_completely(source[1])[u]
