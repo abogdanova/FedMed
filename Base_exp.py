@@ -48,16 +48,25 @@ def mane():
         test_metrics = evaluation(state.model, federated_test_data)
         fd_train_loss.append(metrics[1])
         fd_test_loss.append(test_metrics.loss)
-        fd_test_accuracy.append(test_metrics.categorical_accuracy)
+        fd_test_accuracy.append(test_metrics.sparse_categorical_accuracy)
 
     try:
     	with open('Log/Exp6/'+ EXP_CODE + '.txt', 'w') as log:
     		print(EXP_CODE + "Train = {}".format(fd_train_loss), file=log)
-    		print(EXP_CODE + "Test = {}".format(fd_train_loss), file=log)
+    		print(EXP_CODE + "Test = {}".format(fd_test_loss), file=log)
     		print(EXP_CODE + "Accuracy = {}".format(fd_test_accuracy), file=log)
 
     except IOError:
     	print('File Error')
+
+def get_indices_realistic(y, u):
+    # split dataset into arrays of each class label
+    all_indices = [i for i, d in enumerate(y)]
+    shares_arr = [5000, 3000, 1000, 750, 250]
+    user_indices = []
+    for u in range(USERS):
+        user_indices.append([all_indices.pop(0) for i in range(shares_arr[u])]) 
+    return user_indices
 
 def get_indices_unbalanced(y):
     # split dataset into arrays of each class label
@@ -103,10 +112,12 @@ def get_indices_even(y):
     return user_indices
     
 def get_distributed(source, u, distribution):
-    if distribution == 'iid':
+    if distribution == 'i':
         indices = get_indices_even(source[1])[u]
-    elif distribution == 'non-iid':
+    elif distribution == 'n':
         indices = get_indices_unbalanced(source[1])[u]
+    elif: distribution == 'r':
+        indices = get_indices_realistic(source[1][:10000], u)[u]
     else:
         indices = get_indices_unbalanced_completely(source[1])[u]
     output_sequence = []
@@ -115,7 +126,7 @@ def get_distributed(source, u, distribution):
             batch_samples = indices[i:i + BATCH_SIZE]
             output_sequence.append({
                 'x': np.array([source[0][b] / 255.0 for b in batch_samples], dtype=np.float32),
-                'y': tf.keras.utils.to_categorical(np.array([source[1][b] for b in batch_samples], dtype=np.int32))})
+                'y': np.array([source[1][b] for b in batch_samples], dtype=np.int32)})
     return output_sequence
 
 
@@ -133,9 +144,9 @@ def create_compiled_keras_model():
         tf.keras.layers.Dense(10, activation=tf.nn.softmax)])
 
 	def loss_fn(y_true, y_pred):
-		return tf.reduce_mean(tf.keras.losses.categorical_crossentropy(y_true, y_pred))
+		return tf.reduce_mean(tf.keras.losses.sparse_categorical_crossentropy(y_true, y_pred))
 
-	model.compile(loss=loss_fn, optimizer="adam", metrics=[tf.keras.metrics.CategoricalAccuracy()])
+	model.compile(loss=loss_fn, optimizer="adam", metrics=[tf.keras.metrics.SparseCategoricalAccuracy()])
 	return model
 
 

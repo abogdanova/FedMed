@@ -13,11 +13,11 @@ from tensorflow.keras import layers
 
 tf.compat.v1.enable_v2_behavior()
 
-EXP_CODE = 'iE6C5'
+EXP_CODE = 'iE1C5'
 NUM_EXAMPLES_PER_USER = 2000
 BATCH_SIZE = 32
 USERS = 5
-NUM_EPOCHS = 
+NUM_EPOCHS = 1
 CLASSES = 10
 
 WIDTH = 32
@@ -53,7 +53,7 @@ def mane():
     try:
     	with open('Log/Exp6/'+ EXP_CODE + '.txt', 'w') as log:
     		print(EXP_CODE + "Train = {}".format(fd_train_loss), file=log)
-    		print(EXP_CODE + "Test = {}".format(fd_train_loss), file=log)
+    		print(EXP_CODE + "Test = {}".format(fd_test_loss), file=log)
     		print(EXP_CODE + "Accuracy = {}".format(fd_test_accuracy), file=log)
 
     except IOError:
