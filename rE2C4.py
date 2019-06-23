@@ -116,7 +116,7 @@ def get_distributed(source, u, distribution):
         indices = get_indices_even(source[1])[u]
     elif distribution == 'n':
         indices = get_indices_unbalanced(source[1])[u]
-    elif: distribution == 'r':
+    elif distribution == 'r':
         indices = get_indices_realistic(source[1][:10000], u)[u]
     else:
         indices = get_indices_unbalanced_completely(source[1])[u]
