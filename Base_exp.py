@@ -13,7 +13,7 @@ from tensorflow.keras import layers
 
 tf.compat.v1.enable_v2_behavior()
 
-EXP_CODE = 'test'
+EXP_CODE = 'iE1C5'
 NUM_EXAMPLES_PER_USER = 2000
 BATCH_SIZE = 32
 USERS = 5
@@ -27,8 +27,8 @@ CHANNELS = 3
 def mane():
     """ Run program """
     cifar_train, cifar_test = tf.keras.datasets.cifar10.load_data()
-    federated_train_data = [get_distributed(cifar_train, u, 'non-iid') for u in range(USERS)]
-    federated_test_data = [get_distributed(cifar_test, u, 'non-iid') for u in range(USERS)]
+    federated_train_data = [get_distributed(cifar_train, u, 'iid') for u in range(USERS)]
+    federated_test_data = [get_distributed(cifar_test, u, 'iid') for u in range(USERS)]
     sample_batch = federated_train_data[1][-2]
     
     def model_fn():
@@ -55,6 +55,7 @@ def mane():
     		print("{}Train = {}".format(EXP_CODE, fd_train_loss), file=log)
     		print("{}Test = {}".format(EXP_CODE, fd_train_loss), file=log)
     		print("{}Accuracy = {}".format(EXP_CODE, fd_test_accuracy), file=log)
+
     except IOError:
     	print('File Error')
 
@@ -77,7 +78,7 @@ def get_indices_unbalanced_completely(y):
     indices_array = []
     for c in range(CLASSES):
         indices_array.append([i for i, d in enumerate(y) if d == c])
-            class_shares = CLASSES // min(CLASSES, USERS)
+        class_shares = CLASSES // min(CLASSES, USERS)
     user_indices = []
     for u in range(USERS):
         user_indices.append(
@@ -121,14 +122,14 @@ def get_distributed(source, u, distribution):
 def create_compiled_keras_model():
 	model = tf.keras.models.Sequential([
 		tf.keras.layers.Conv2D(32,(3, 3),
-            activation="relu",
+            activation="tanh",
             padding="same",
             input_shape=(WIDTH, HEIGHT, CHANNELS)),
         tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
-        tf.keras.layers.Conv2D(64, (3, 3), activation="relu", padding="same"),
+        tf.keras.layers.Conv2D(64, (3, 3), activation="tanh", padding="same"),
         tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
         tf.keras.layers.Flatten(), 
-        tf.keras.layers.Dense(128, activation="relu"),
+        tf.keras.layers.Dense(128, activation="tanh"),
         tf.keras.layers.Dense(10, activation=tf.nn.softmax)])
 
 	def loss_fn(y_true, y_pred):
