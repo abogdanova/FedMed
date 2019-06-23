@@ -52,9 +52,9 @@ def mane():
 
     try:
     	with open('Log/Exp6/'+ EXP_CODE + 'txt', 'w') as log:
-    		print("{}Train = {}".format(EXP_CODE, fd_train_loss), file=log)
-    		print("{}Test = {}".format(EXP_CODE, fd_train_loss), file=log)
-    		print("{}Accuracy = {}".format(EXP_CODE, fd_test_accuracy), file=log)
+    		print(EXP_CODE + "Train = {}".format(fd_train_loss), file=log)
+    		print(EXP_CODE + "Test = {}".format(fd_train_loss), file=log)
+    		print(EXP_CODE + "Accuracy = {}".format(fd_test_accuracy), file=log)
 
     except IOError:
     	print('File Error')
