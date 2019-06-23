@@ -13,6 +13,7 @@ from tensorflow.keras import layers
 
 tf.compat.v1.enable_v2_behavior()
 
+EXP_CODE = 'test'
 NUM_EXAMPLES_PER_USER = 2000
 BATCH_SIZE = 32
 USERS = 5
@@ -46,13 +47,14 @@ def mane():
         state, metrics = iterative_process.next(state, list(np.array(federated_train_data)[selected]))
         test_metrics = evaluation(state.model, federated_test_data)
         fd_train_loss.append(metrics[1])
+        fd_test_loss.append(test_metrics.loss)
         fd_test_accuracy.append(test_metrics.categorical_accuracy)
 
     try:
-    	with open('Log/Exp6/IE1C5.txt', 'w') as log:
-    		print("IE1C5Train = {}".format(fd_train_loss), file=log)
-    		print("IE1C5TrainTest = {}".format(fd_train_loss), file=log)
-    		print("Test Accuracy = {}".format(fd_test_accuracy), file=log)
+    	with open('Log/Exp6/'+ EXP_CODE + 'txt', 'w') as log:
+    		print("{}Train = {}".format(EXP_CODE, fd_train_loss), file=log)
+    		print("{}Test = {}".format(EXP_CODE, fd_train_loss), file=log)
+    		print("{}Accuracy = {}".format(EXP_CODE, fd_test_accuracy), file=log)
     except IOError:
     	print('File Error')
 
@@ -62,6 +64,20 @@ def get_indices_unbalanced(y):
     for c in range(CLASSES):
         indices_array.append([i for i, d in enumerate(y) if d == c])
         class_shares = CLASSES // min(CLASSES, USERS)
+    user_indices = []
+    for u in range(USERS):
+        user_indices.append(
+            np.array(
+                [indices_array.pop(0)[:NUM_EXAMPLES_PER_USER//class_shares] for j in range(class_shares)])
+            .flatten())
+    return user_indices
+
+def get_indices_unbalanced_completely(y):
+    # split dataset into arrays of each class label
+    indices_array = []
+    for c in range(CLASSES):
+        indices_array.append([i for i, d in enumerate(y) if d == c])
+            class_shares = CLASSES // min(CLASSES, USERS)
     user_indices = []
     for u in range(USERS):
         user_indices.append(
@@ -88,29 +104,31 @@ def get_indices_even(y):
 def get_distributed(source, u, distribution):
     if distribution == 'iid':
         indices = get_indices_even(source[1])[u]
-    else:
+    elif distribution == 'non-iid':
         indices = get_indices_unbalanced(source[1])[u]
+    else:
+        indices = get_indices_unbalanced_completely(source[1])[u]
     output_sequence = []
     for repeat in range(NUM_EPOCHS):
         for i in range(0, len(indices), BATCH_SIZE):
             batch_samples = indices[i:i + BATCH_SIZE]
             output_sequence.append({
                 'x': np.array([source[0][b] / 255.0 for b in batch_samples], dtype=np.float32),
-                'y': np.array([source[1][b] for b in batch_samples], dtype=np.int32)})
+                'y': tf.keras.utils.to_categorical(np.array([source[1][b] for b in batch_samples], dtype=np.int32))})
     return output_sequence
 
 
 def create_compiled_keras_model():
 	model = tf.keras.models.Sequential([
 		tf.keras.layers.Conv2D(32,(3, 3),
-            activation="tanh",
+            activation="relu",
             padding="same",
             input_shape=(WIDTH, HEIGHT, CHANNELS)),
         tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
-        tf.keras.layers.Conv2D(64, (3, 3), activation="tanh", padding="same"),
+        tf.keras.layers.Conv2D(64, (3, 3), activation="relu", padding="same"),
         tf.keras.layers.MaxPooling2D(pool_size=(2,2)),
         tf.keras.layers.Flatten(), 
-        tf.keras.layers.Dense(128, activation="tanh"),
+        tf.keras.layers.Dense(128, activation="relu"),
         tf.keras.layers.Dense(10, activation=tf.nn.softmax)])
 
 	def loss_fn(y_true, y_pred):

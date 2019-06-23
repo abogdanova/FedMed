@@ -16,7 +16,7 @@ tf.compat.v1.enable_v2_behavior()
 NUM_EXAMPLES_PER_USER = 2000
 BATCH_SIZE = 32
 USERS = 5
-NUM_EPOCHS = 1
+NUM_EPOCHS = 2
 CLASSES = 10
 
 WIDTH = 32
@@ -38,21 +38,20 @@ def mane():
     evaluation = tff.learning.build_federated_evaluation(model_fn)
     state = iterative_process.initialize()
     fd_test_accuracy = []
-    fd_test_loss = []
     fd_train_loss = []
 
     for round_num in range(12):
-        selected = np.random.choice(5, 5, replace=False)
+        selected = np.random.choice(5, 4, replace=False)
         state, metrics = iterative_process.next(state, list(np.array(federated_train_data)[selected]))
         test_metrics = evaluation(state.model, federated_test_data)
         fd_train_loss.append(metrics[1])
-        fd_test_accuracy.append(test_metrics.categorical_accuracy)
+        fd_test_accuracy.append(test_metrics.sparse_categorical_accuracy)
 
     try:
-    	with open('Log/Exp6/IE1C5.txt', 'w') as log:
-    		print("IE1C5Train = {}".format(fd_train_loss), file=log)
-    		print("IE1C5TrainTest = {}".format(fd_train_loss), file=log)
-    		print("Test Accuracy = {}".format(fd_test_accuracy), file=log)
+    	with open('Log/Exp5/niiE2C4.txt', 'w') as log:
+    		print("Cifar10, Federated E2C4, non-IID, minibatch_size: 32", file=log)
+    		print("Train Loss: {}".format(fd_train_loss), file=log)
+    		print("Test Accuracy: {}".format(fd_test_accuracy), file=log)
     except IOError:
     	print('File Error')
 
@@ -114,9 +113,9 @@ def create_compiled_keras_model():
         tf.keras.layers.Dense(10, activation=tf.nn.softmax)])
 
 	def loss_fn(y_true, y_pred):
-		return tf.reduce_mean(tf.keras.losses.categorical_crossentropy(y_true, y_pred))
+		return tf.reduce_mean(tf.keras.losses.sparse_categorical_crossentropy(y_true, y_pred))
 
-	model.compile(loss=loss_fn, optimizer="adam", metrics=[tf.keras.metrics.CategoricalAccuracy()])
+	model.compile(loss=loss_fn, optimizer="adam", metrics=[tf.keras.metrics.SparseCategoricalAccuracy()])
 	return model
 
 
