@@ -13,9 +13,9 @@ from tensorflow.keras import layers
 
 tf.compat.v1.enable_v2_behavior()
 
-EXP_CODE = 'iB64E1'
+EXP_CODE = 'rE1C4'
 NUM_EXAMPLES_PER_USER = 2000
-BATCH_SIZE = 64
+BATCH_SIZE = 32
 USERS = 5
 NUM_EPOCHS = 1
 CLASSES = 10
@@ -27,8 +27,8 @@ CHANNELS = 3
 def mane():
     """ Run program """
     cifar_train, cifar_test = tf.keras.datasets.cifar10.load_data()
-    federated_train_data = [get_distributed(cifar_train, u, 'i') for u in range(USERS)]
-    federated_test_data = [get_distributed(cifar_test, u, 'i') for u in range(USERS)]
+    federated_train_data = [get_distributed(cifar_train, u, 'r') for u in range(USERS)]
+    federated_test_data = [get_distributed(cifar_test, u, 'r') for u in range(USERS)]
     sample_batch = federated_train_data[1][-2]
     
     def model_fn():
@@ -42,8 +42,8 @@ def mane():
     fd_test_loss = []
     fd_train_loss = []
 
-    for round_num in range(12):
-        selected = np.random.choice(5, 5, replace=False)
+    for round_num in range(50):
+        selected = np.random.choice(5, 4, replace=False)
         state, metrics = iterative_process.next(state, list(np.array(federated_train_data)[selected]))
         test_metrics = evaluation(state.model, federated_test_data)
         fd_train_loss.append(metrics[1])

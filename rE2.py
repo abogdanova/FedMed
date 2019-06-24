@@ -13,11 +13,11 @@ from tensorflow.keras import layers
 
 tf.compat.v1.enable_v2_behavior()
 
-EXP_CODE = 'rB128C5'
+EXP_CODE = 'rE1'
 NUM_EXAMPLES_PER_USER = 2000
-BATCH_SIZE = 128
+BATCH_SIZE = 32
 USERS = 5
-NUM_EPOCHS = 1
+NUM_EPOCHS = 2
 CLASSES = 10
 
 WIDTH = 32
@@ -42,7 +42,7 @@ def mane():
     fd_test_loss = []
     fd_train_loss = []
 
-    for round_num in range(12):
+    for round_num in range(50):
         selected = np.random.choice(5, 5, replace=False)
         state, metrics = iterative_process.next(state, list(np.array(federated_train_data)[selected]))
         test_metrics = evaluation(state.model, federated_test_data)
@@ -62,7 +62,7 @@ def mane():
 def get_indices_realistic(y, u):
     # split dataset into arrays of each class label
     all_indices = [i for i, d in enumerate(y)]
-    shares_arr = [5000, 3000, 1000, 750, 250]
+    shares_arr = [4000, 2000, 2000, 1000, 1000]
     user_indices = []
     for u in range(USERS):
         user_indices.append([all_indices.pop(0) for i in range(shares_arr[u])]) 
