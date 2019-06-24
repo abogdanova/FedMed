@@ -13,11 +13,11 @@ from tensorflow.keras import layers
 
 tf.compat.v1.enable_v2_behavior()
 
-EXP_CODE = 'iE2C5'
+EXP_CODE = 'nE1C3'
 NUM_EXAMPLES_PER_USER = 2000
 BATCH_SIZE = 32
 USERS = 5
-NUM_EPOCHS = 2
+NUM_EPOCHS = 1
 CLASSES = 10
 
 WIDTH = 32
@@ -27,8 +27,8 @@ CHANNELS = 3
 def mane():
     """ Run program """
     cifar_train, cifar_test = tf.keras.datasets.cifar10.load_data()
-    federated_train_data = [get_distributed(cifar_train, u, 'i') for u in range(USERS)]
-    federated_test_data = [get_distributed(cifar_test, u, 'i') for u in range(USERS)]
+    federated_train_data = [get_distributed(cifar_train, u, 'n') for u in range(USERS)]
+    federated_test_data = [get_distributed(cifar_test, u, 'n') for u in range(USERS)]
     sample_batch = federated_train_data[1][-2]
     
     def model_fn():
@@ -43,7 +43,7 @@ def mane():
     fd_train_loss = []
 
     for round_num in range(12):
-        selected = np.random.choice(5, 5, replace=False)
+        selected = np.random.choice(5, 3, replace=False)
         state, metrics = iterative_process.next(state, list(np.array(federated_train_data)[selected]))
         test_metrics = evaluation(state.model, federated_test_data)
         fd_train_loss.append(metrics[1])
@@ -51,7 +51,7 @@ def mane():
         fd_test_accuracy.append(test_metrics.sparse_categorical_accuracy)
 
     try:
-    	with open('Log/Exp6/'+ EXP_CODE + '.txt', 'w') as log:
+    	with open('Log/Exp8/'+ EXP_CODE + '.txt', 'w') as log:
     		print(EXP_CODE + "Train = {}".format(fd_train_loss), file=log)
     		print(EXP_CODE + "Test = {}".format(fd_test_loss), file=log)
     		print(EXP_CODE + "Accuracy = {}".format(fd_test_accuracy), file=log)
@@ -122,7 +122,7 @@ def get_distributed(source, u, distribution):
         indices = get_indices_even(source[1])[u]
     elif distribution == 'n':
         indices = get_indices_unbalanced(source[1])[u]
-    elif  distribution == 'r':
+    elif distribution == 'r':
         indices = get_indices_realistic(source[1][:10000], u)[u]
     else:
         indices = get_indices_unbalanced_completely(source[1])[u]

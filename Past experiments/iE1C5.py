@@ -13,7 +13,7 @@ from tensorflow.keras import layers
 
 tf.compat.v1.enable_v2_behavior()
 
-EXP_CODE = 'nE1C5'
+EXP_CODE = 'iE1C5'
 NUM_EXAMPLES_PER_USER = 2000
 BATCH_SIZE = 32
 USERS = 5
@@ -27,8 +27,8 @@ CHANNELS = 3
 def mane():
     """ Run program """
     cifar_train, cifar_test = tf.keras.datasets.cifar10.load_data()
-    federated_train_data = [get_distributed(cifar_train, u, 'iid') for u in range(USERS)]
-    federated_test_data = [get_distributed(cifar_test, u, 'iid') for u in range(USERS)]
+    federated_train_data = [get_distributed(cifar_train, u, 'i') for u in range(USERS)]
+    federated_test_data = [get_distributed(cifar_test, u, 'i') for u in range(USERS)]
     sample_batch = federated_train_data[1][-2]
     
     def model_fn():
@@ -48,7 +48,7 @@ def mane():
         test_metrics = evaluation(state.model, federated_test_data)
         fd_train_loss.append(metrics[1])
         fd_test_loss.append(test_metrics.loss)
-        fd_test_accuracy.append(test_metrics.categorical_accuracy)
+        fd_test_accuracy.append(test_metrics.sparse_categorical_accuracy)
 
     try:
     	with open('Log/Exp6/'+ EXP_CODE + '.txt', 'w') as log:
@@ -59,17 +59,32 @@ def mane():
     except IOError:
     	print('File Error')
 
+def get_indices_realistic(y, u):
+    # split dataset into arrays of each class label
+    all_indices = [i for i, d in enumerate(y)]
+    shares_arr = [5000, 3000, 1000, 750, 250]
+    user_indices = []
+    for u in range(USERS):
+        user_indices.append([all_indices.pop(0) for i in range(shares_arr[u])]) 
+    return user_indices
+
 def get_indices_unbalanced(y):
     # split dataset into arrays of each class label
     indices_array = []
     for c in range(CLASSES):
         indices_array.append([i for i, d in enumerate(y) if d == c])
-        class_shares = CLASSES // min(CLASSES, USERS)
+    # each user will have 2 classes excluded from their data sets, thus 250 examples * remaining 8 classes
+    class_shares = 250
+    # store indices for future use
     user_indices = []
+    # auxilary index array to pop out pairs of classes missing at each user
+    class_index = list(range(CLASSES))
     for u in range(USERS):
+        columns_out = [class_index.pop(0) for i in range(2)]
+        selected_columns = set(range(CLASSES)) - set(columns_out)
+        starting_index = u*class_shares
         user_indices.append(
-            np.array(
-                [indices_array.pop(0)[:NUM_EXAMPLES_PER_USER//class_shares] for j in range(class_shares)])
+            np.array(indices_array)[list(selected_columns)].T[starting_index:starting_index + class_shares]
             .flatten())
     return user_indices
 
@@ -103,10 +118,12 @@ def get_indices_even(y):
     return user_indices
     
 def get_distributed(source, u, distribution):
-    if distribution == 'iid':
+    if distribution == 'i':
         indices = get_indices_even(source[1])[u]
-    elif distribution == 'non-iid':
+    elif distribution == 'n':
         indices = get_indices_unbalanced(source[1])[u]
+    elif  distribution == 'r':
+        indices = get_indices_realistic(source[1][:10000], u)[u]
     else:
         indices = get_indices_unbalanced_completely(source[1])[u]
     output_sequence = []
@@ -115,7 +132,7 @@ def get_distributed(source, u, distribution):
             batch_samples = indices[i:i + BATCH_SIZE]
             output_sequence.append({
                 'x': np.array([source[0][b] / 255.0 for b in batch_samples], dtype=np.float32),
-                'y': tf.keras.utils.to_categorical(np.array([source[1][b] for b in batch_samples], dtype=np.int32))})
+                'y': np.array([source[1][b] for b in batch_samples], dtype=np.int32)})
     return output_sequence
 
 
@@ -133,9 +150,9 @@ def create_compiled_keras_model():
         tf.keras.layers.Dense(10, activation=tf.nn.softmax)])
 
 	def loss_fn(y_true, y_pred):
-		return tf.reduce_mean(tf.keras.losses.categorical_crossentropy(y_true, y_pred))
+		return tf.reduce_mean(tf.keras.losses.sparse_categorical_crossentropy(y_true, y_pred))
 
-	model.compile(loss=loss_fn, optimizer="adam", metrics=[tf.keras.metrics.CategoricalAccuracy()])
+	model.compile(loss=loss_fn, optimizer="adam", metrics=[tf.keras.metrics.SparseCategoricalAccuracy()])
 	return model
 
 
