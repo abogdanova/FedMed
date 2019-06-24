@@ -13,9 +13,9 @@ from tensorflow.keras import layers
 
 tf.compat.v1.enable_v2_behavior()
 
-EXP_CODE = 'iB64E1'
+EXP_CODE = 'rB128C5'
 NUM_EXAMPLES_PER_USER = 2000
-BATCH_SIZE = 64
+BATCH_SIZE = 128
 USERS = 5
 NUM_EPOCHS = 1
 CLASSES = 10
@@ -27,8 +27,8 @@ CHANNELS = 3
 def mane():
     """ Run program """
     cifar_train, cifar_test = tf.keras.datasets.cifar10.load_data()
-    federated_train_data = [get_distributed(cifar_train, u, 'i') for u in range(USERS)]
-    federated_test_data = [get_distributed(cifar_test, u, 'i') for u in range(USERS)]
+    federated_train_data = [get_distributed(cifar_train, u, 'r') for u in range(USERS)]
+    federated_test_data = [get_distributed(cifar_test, u, 'r') for u in range(USERS)]
     sample_batch = federated_train_data[1][-2]
     
     def model_fn():
@@ -51,7 +51,7 @@ def mane():
         fd_test_accuracy.append(test_metrics.sparse_categorical_accuracy)
 
     try:
-    	with open('Log/Exp10/'+ EXP_CODE + '.txt', 'w') as log:
+    	with open('Log/Exp9/'+ EXP_CODE + '.txt', 'w') as log:
     		print(EXP_CODE + "Train = {}".format(fd_train_loss), file=log)
     		print(EXP_CODE + "Test = {}".format(fd_test_loss), file=log)
     		print(EXP_CODE + "Accuracy = {}".format(fd_test_accuracy), file=log)

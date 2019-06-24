@@ -51,7 +51,7 @@ def mane():
         fd_test_accuracy.append(test_metrics.sparse_categorical_accuracy)
 
     try:
-    	with open('Log/Exp9/'+ EXP_CODE + '.txt', 'w') as log:
+    	with open('Log/Exp10/'+ EXP_CODE + '.txt', 'w') as log:
     		print(EXP_CODE + "Train = {}".format(fd_train_loss), file=log)
     		print(EXP_CODE + "Test = {}".format(fd_test_loss), file=log)
     		print(EXP_CODE + "Accuracy = {}".format(fd_test_accuracy), file=log)

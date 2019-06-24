@@ -13,9 +13,9 @@ from tensorflow.keras import layers
 
 tf.compat.v1.enable_v2_behavior()
 
-EXP_CODE = 'iB64E1'
+EXP_CODE = 'B128'
 NUM_EXAMPLES_PER_USER = 2000
-BATCH_SIZE = 64
+BATCH_SIZE = 128
 USERS = 5
 NUM_EPOCHS = 1
 CLASSES = 10
@@ -42,7 +42,7 @@ def mane():
     fd_test_loss = []
     fd_train_loss = []
 
-    for round_num in range(12):
+    for round_num in range(50):
         selected = np.random.choice(5, 5, replace=False)
         state, metrics = iterative_process.next(state, list(np.array(federated_train_data)[selected]))
         test_metrics = evaluation(state.model, federated_test_data)
