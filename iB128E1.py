@@ -13,7 +13,7 @@ from tensorflow.keras import layers
 
 tf.compat.v1.enable_v2_behavior()
 
-EXP_CODE = 'iB64E1'
+EXP_CODE = 'iB128E1'
 NUM_EXAMPLES_PER_USER = 2000
 BATCH_SIZE = 128
 USERS = 5
