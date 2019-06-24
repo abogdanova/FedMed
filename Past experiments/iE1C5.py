@@ -51,7 +51,7 @@ def mane():
         fd_test_accuracy.append(test_metrics.sparse_categorical_accuracy)
 
     try:
-    	with open('Log/Exp6/'+ EXP_CODE + '.txt', 'w') as log:
+    	with open('Log/Exp8/'+ EXP_CODE + '.txt', 'w') as log:
     		print(EXP_CODE + "Train = {}".format(fd_train_loss), file=log)
     		print(EXP_CODE + "Test = {}".format(fd_test_loss), file=log)
     		print(EXP_CODE + "Accuracy = {}".format(fd_test_accuracy), file=log)
@@ -122,7 +122,7 @@ def get_distributed(source, u, distribution):
         indices = get_indices_even(source[1])[u]
     elif distribution == 'n':
         indices = get_indices_unbalanced(source[1])[u]
-    elif  distribution == 'r':
+    elif distribution == 'r':
         indices = get_indices_realistic(source[1][:10000], u)[u]
     else:
         indices = get_indices_unbalanced_completely(source[1])[u]
