@@ -52,7 +52,7 @@ def mane():
         fd_test_accuracy.append(test_metrics.sparse_categorical_accuracy)
         epochs = epochs - 1
         federated_train_data = [get_distributed(cifar_train, u, 'i', epochs) for u in range(USERS)]
-        federated_test_data = [get_distributed(cifar_train, u, 'i', epochs) for u in range(USERS)]
+    
 
     try:
     	with open('Log/Exp10/'+ EXP_CODE + '.txt', 'w') as log:
