@@ -13,7 +13,7 @@ from tensorflow.keras import layers
 
 tf.compat.v1.enable_v2_behavior()
 
-EXP_CODE = 'E1'
+EXP_CODE = 'E1-2'
 NUM_EXAMPLES_PER_USER = 2000
 BATCH_SIZE = 32
 USERS = 5
@@ -43,10 +43,10 @@ def mane():
     fd_test_loss = []
     fd_train_loss = []
 
-    for round_num in range(50):
+    for round_num in range(1):
         selected = np.random.choice(5, 5, replace=False)
         state, metrics = iterative_process.next(state, list(np.array(federated_train_data)[selected]))
-        non_federated_model.set_weights(tff.learning.keras_weights_from_tff_weights(state.model))
+        non_federated_model.set_weights(state.model.trainable)
         (loss, accuracy) = non_federated_model.evaluate(X_test, y_test)
         fd_train_loss.append(metrics[1])
         fd_test_accuracy.append(accuracy)
