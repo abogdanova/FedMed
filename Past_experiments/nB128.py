@@ -13,9 +13,9 @@ from tensorflow.keras import layers
 
 tf.compat.v1.enable_v2_behavior()
 
-EXP_CODE = 'rE1C2'
+EXP_CODE = 'nB128'
 NUM_EXAMPLES_PER_USER = 2000
-BATCH_SIZE = 32
+BATCH_SIZE = 128
 USERS = 5
 NUM_EPOCHS = 1
 CLASSES = 10
@@ -27,8 +27,8 @@ CHANNELS = 3
 def mane():
     """ Run program """
     cifar_train, cifar_test = tf.keras.datasets.cifar10.load_data()
-    federated_train_data = [get_distributed(cifar_train, u, 'r') for u in range(USERS)]
-    federated_test_data = [get_distributed(cifar_test, u, 'r') for u in range(USERS)]
+    federated_train_data = [get_distributed(cifar_train, u, 'n') for u in range(USERS)]
+    federated_test_data = [get_distributed(cifar_test, u, 'n') for u in range(USERS)]
     sample_batch = federated_train_data[1][-2]
     
     def model_fn():
@@ -43,7 +43,7 @@ def mane():
     fd_train_loss = []
 
     for round_num in range(50):
-        selected = np.random.choice(5, 2, replace=False)
+        selected = np.random.choice(5, 5, replace=False)
         state, metrics = iterative_process.next(state, list(np.array(federated_train_data)[selected]))
         test_metrics = evaluation(state.model, federated_test_data)
         fd_train_loss.append(metrics[1])
@@ -62,7 +62,7 @@ def mane():
 def get_indices_realistic(y, u):
     # split dataset into arrays of each class label
     all_indices = [i for i, d in enumerate(y)]
-    shares_arr = [4000, 2000, 2000, 1000, 1000]
+    shares_arr = [5000, 3000, 1000, 750, 250]
     user_indices = []
     for u in range(USERS):
         user_indices.append([all_indices.pop(0) for i in range(shares_arr[u])]) 

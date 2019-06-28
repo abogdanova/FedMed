@@ -13,7 +13,7 @@ from tensorflow.keras import layers
 
 tf.compat.v1.enable_v2_behavior()
 
-EXP_CODE = 'rE2C2'
+EXP_CODE = 'rE1C2'
 NUM_EXAMPLES_PER_USER = 2000
 BATCH_SIZE = 32
 USERS = 5
@@ -42,7 +42,7 @@ def mane():
     fd_test_loss = []
     fd_train_loss = []
 
-    for round_num in range(12):
+    for round_num in range(50):
         selected = np.random.choice(5, 2, replace=False)
         state, metrics = iterative_process.next(state, list(np.array(federated_train_data)[selected]))
         test_metrics = evaluation(state.model, federated_test_data)
@@ -51,7 +51,7 @@ def mane():
         fd_test_accuracy.append(test_metrics.sparse_categorical_accuracy)
 
     try:
-    	with open('Log/Exp7/'+ EXP_CODE + '.txt', 'w') as log:
+    	with open('Log/Exp10/'+ EXP_CODE + '.txt', 'w') as log:
     		print(EXP_CODE + "Train = {}".format(fd_train_loss), file=log)
     		print(EXP_CODE + "Test = {}".format(fd_test_loss), file=log)
     		print(EXP_CODE + "Accuracy = {}".format(fd_test_accuracy), file=log)
@@ -62,7 +62,7 @@ def mane():
 def get_indices_realistic(y, u):
     # split dataset into arrays of each class label
     all_indices = [i for i, d in enumerate(y)]
-    shares_arr = [5000, 3000, 1000, 750, 250]
+    shares_arr = [4000, 2000, 2000, 1000, 1000]
     user_indices = []
     for u in range(USERS):
         user_indices.append([all_indices.pop(0) for i in range(shares_arr[u])]) 
@@ -73,12 +73,18 @@ def get_indices_unbalanced(y):
     indices_array = []
     for c in range(CLASSES):
         indices_array.append([i for i, d in enumerate(y) if d == c])
-        class_shares = CLASSES // min(CLASSES, USERS)
+    # each user will have 2 classes excluded from their data sets, thus 250 examples * remaining 8 classes
+    class_shares = 250
+    # store indices for future use
     user_indices = []
+    # auxilary index array to pop out pairs of classes missing at each user
+    class_index = list(range(CLASSES))
     for u in range(USERS):
+        columns_out = [class_index.pop(0) for i in range(2)]
+        selected_columns = set(range(CLASSES)) - set(columns_out)
+        starting_index = u*class_shares
         user_indices.append(
-            np.array(
-                [indices_array.pop(0)[:NUM_EXAMPLES_PER_USER//class_shares] for j in range(class_shares)])
+            np.array(indices_array)[list(selected_columns)].T[starting_index:starting_index + class_shares]
             .flatten())
     return user_indices
 

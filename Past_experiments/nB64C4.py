@@ -42,7 +42,7 @@ def mane():
     fd_test_loss = []
     fd_train_loss = []
 
-    for round_num in range(12):
+    for round_num in range(50):
         selected = np.random.choice(5, 4, replace=False)
         state, metrics = iterative_process.next(state, list(np.array(federated_train_data)[selected]))
         test_metrics = evaluation(state.model, federated_test_data)
@@ -51,7 +51,7 @@ def mane():
         fd_test_accuracy.append(test_metrics.sparse_categorical_accuracy)
 
     try:
-    	with open('Log/Exp9/'+ EXP_CODE + '.txt', 'w') as log:
+    	with open('Log/Exp10/'+ EXP_CODE + '.txt', 'w') as log:
     		print(EXP_CODE + "Train = {}".format(fd_train_loss), file=log)
     		print(EXP_CODE + "Test = {}".format(fd_test_loss), file=log)
     		print(EXP_CODE + "Accuracy = {}".format(fd_test_accuracy), file=log)
