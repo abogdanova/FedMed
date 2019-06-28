@@ -13,7 +13,7 @@ from tensorflow.keras import layers
 
 tf.compat.v1.enable_v2_behavior()
 
-EXP_CODE = 'B128'
+EXP_CODE = 'rB128'
 NUM_EXAMPLES_PER_USER = 2000
 BATCH_SIZE = 128
 USERS = 5
@@ -27,7 +27,7 @@ CHANNELS = 3
 def mane():
     """ Run program """
     cifar_train, cifar_test = tf.keras.datasets.cifar10.load_data()
-    federated_train_data = [get_distributed(cifar_train, u, 'n') for u in range(USERS)]
+    federated_train_data = [get_distributed(cifar_train, u, 'r') for u in range(USERS)]
     (X_test, y_test) = get_non_distributed(cifar_test)
     sample_batch = federated_train_data[1][-2]
     non_federated_model = create_compiled_keras_model()
@@ -46,7 +46,7 @@ def mane():
     for round_num in range(50):
         selected = np.random.choice(5, 5, replace=False)
         state, metrics = iterative_process.next(state, list(np.array(federated_train_data)[selected]))
-        non_federated_model.set_weights(tff.learning.keras_weights_from_tff_weights(state.model))
+        non_federated_model.set_weights(state.model.trainable)
         (loss, accuracy) = non_federated_model.evaluate(X_test, y_test)
         fd_train_loss.append(metrics[1])
         fd_test_accuracy.append(accuracy)

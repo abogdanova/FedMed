@@ -46,7 +46,7 @@ def mane():
     for round_num in range(50):
         selected = np.random.choice(5, 5, replace=False)
         state, metrics = iterative_process.next(state, list(np.array(federated_train_data)[selected]))
-        non_federated_model.set_weights(tff.learning.keras_weights_from_tff_weights(state.model))
+        non_federated_model.set_weights(state.model.trainable)
         (loss, accuracy) = non_federated_model.evaluate(X_test, y_test)
         fd_train_loss.append(metrics[1])
         fd_test_accuracy.append(accuracy)
