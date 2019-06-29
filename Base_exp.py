@@ -53,10 +53,8 @@ def mane():
         fd_test_loss.append(loss)
 
     try:
-    	with open('Log/Exp11/'+ EXP_CODE + '.txt', 'w') as log:
-    		print(EXP_CODE + "Train = {}".format(fd_train_loss), file=log)
-    		print(EXP_CODE + "Test = {}".format(fd_test_loss), file=log)
-    		print(EXP_CODE + "Accuracy = {}".format(fd_test_accuracy), file=log)
+    	with open('Log/Exp12/'+ EXP_CODE + '.txt', 'w') as log:
+    		print(state.model.trainable, file=log)
 
     except IOError:
     	print('File Error')
