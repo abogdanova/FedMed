@@ -13,11 +13,11 @@ from tensorflow.keras import layers
 
 tf.compat.v1.enable_v2_behavior()
 
-EXP_CODE = 'B128'
+EXP_CODE = 'miaE12'
 NUM_EXAMPLES_PER_USER = 2000
-BATCH_SIZE = 128
+BATCH_SIZE = 32
 USERS = 5
-NUM_EPOCHS = 1
+NUM_EPOCHS = 12
 CLASSES = 10
 
 WIDTH = 32
@@ -43,21 +43,14 @@ def mane():
     fd_test_loss = []
     fd_train_loss = []
 
-    for round_num in range(12):
+    for round_num in range(50):
         selected = np.random.choice(5, 5, replace=False)
         state, metrics = iterative_process.next(state, list(np.array(federated_train_data)[selected]))
         non_federated_model.set_weights(state.model.trainable)
         (loss, accuracy) = non_federated_model.evaluate(X_test, y_test)
-        fd_train_loss.append(metrics[1])
-        fd_test_accuracy.append(accuracy)
-        fd_test_loss.append(loss)
+    
+    non_federated_model.save(EXP_CODE + ".h5")
 
-    try:
-    	with open('Log/Exp12/'+ EXP_CODE + '.txt', 'w') as log:
-    		print(state.model.trainable, file=log)
-
-    except IOError:
-    	print('File Error')
 
 def get_indices_realistic(y, u):
     # split dataset into arrays of each class label

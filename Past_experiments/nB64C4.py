@@ -28,9 +28,10 @@ def mane():
     """ Run program """
     cifar_train, cifar_test = tf.keras.datasets.cifar10.load_data()
     federated_train_data = [get_distributed(cifar_train, u, 'n') for u in range(USERS)]
-    federated_test_data = [get_distributed(cifar_test, u, 'n') for u in range(USERS)]
+    (X_test, y_test) = get_non_distributed(cifar_test)
     sample_batch = federated_train_data[1][-2]
-    
+    non_federated_model = create_compiled_keras_model()
+
     def model_fn():
     	keras_model = create_compiled_keras_model()
     	return tff.learning.from_compiled_keras_model(keras_model, sample_batch)
@@ -45,13 +46,14 @@ def mane():
     for round_num in range(50):
         selected = np.random.choice(5, 4, replace=False)
         state, metrics = iterative_process.next(state, list(np.array(federated_train_data)[selected]))
-        test_metrics = evaluation(state.model, federated_test_data)
+        non_federated_model.set_weights(state.model.trainable)
+        (loss, accuracy) = non_federated_model.evaluate(X_test, y_test)
         fd_train_loss.append(metrics[1])
-        fd_test_loss.append(test_metrics.loss)
-        fd_test_accuracy.append(test_metrics.sparse_categorical_accuracy)
+        fd_test_accuracy.append(accuracy)
+        fd_test_loss.append(loss)
 
     try:
-    	with open('Log/Exp10/'+ EXP_CODE + '.txt', 'w') as log:
+    	with open('Log/Exp11/'+ EXP_CODE + '.txt', 'w') as log:
     		print(EXP_CODE + "Train = {}".format(fd_train_loss), file=log)
     		print(EXP_CODE + "Test = {}".format(fd_test_loss), file=log)
     		print(EXP_CODE + "Accuracy = {}".format(fd_test_accuracy), file=log)
@@ -62,7 +64,7 @@ def mane():
 def get_indices_realistic(y, u):
     # split dataset into arrays of each class label
     all_indices = [i for i, d in enumerate(y)]
-    shares_arr = [5000, 3000, 1000, 750, 250]
+    shares_arr = [4000, 2000, 2000, 1000, 1000]
     user_indices = []
     for u in range(USERS):
         user_indices.append([all_indices.pop(0) for i in range(shares_arr[u])]) 
@@ -135,6 +137,10 @@ def get_distributed(source, u, distribution):
                 'y': np.array([source[1][b] for b in batch_samples], dtype=np.int32)})
     return output_sequence
 
+def get_non_distributed(source):
+    y = np.array(source[1][:10000], dtype=np.int32)
+    X = np.array(source[0][:10000], dtype=np.float32) / 255.0
+    return X, y
 
 def create_compiled_keras_model():
 	model = tf.keras.models.Sequential([
